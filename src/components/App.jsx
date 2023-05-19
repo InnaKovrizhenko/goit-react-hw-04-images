@@ -16,9 +16,13 @@ export const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showLoadMoreButton, setShowLoadMoreButton] = useState(false);
+
+  console.log(isModalOpen);
+  console.log(showLoadMoreButton);
+
   
   useEffect (() => {
-    if (inputPictureName !== "") {
+    if (inputPictureName) {
       getPictures(inputPictureName);
     }
   }, [inputPictureName])
