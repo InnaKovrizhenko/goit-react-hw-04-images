@@ -13,12 +13,9 @@ export const App = () => {
   const [pictures, setPictures] = useState([]);
   const [page, setPage] = useState(1);
   const [selectedPicture, setSelectedPicture] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ , setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showLoadMoreButton, setShowLoadMoreButton] = useState(false);
-
-  console.log(isModalOpen);
-  console.log(showLoadMoreButton);
+  const [ , setShowLoadMoreButton] = useState(false);
 
   
   useEffect (() => {
