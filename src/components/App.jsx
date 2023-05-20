@@ -13,72 +13,56 @@ export const App = () => {
   const [pictures, setPictures] = useState([]);
   const [page, setPage] = useState(1);
   const [selectedPicture, setSelectedPicture] = useState('');
-  const [ , setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [ , setShowLoadMoreButton] = useState(false);
 
-  
   useEffect (() => {
     if (inputPictureName) {
-      getPictures(inputPictureName);
-    }
-  }, [inputPictureName])
+      setIsLoading(true);
+      fetchPictures(inputPictureName, page)
+    .then((data) => {
+      setPictures(prevPictures => {
+        return [...prevPictures, ...data.hits];
+      }
+      );
+    })
+    .catch(error => console.log(error))
+    .finally(() => {
+      setIsLoading(false);
+    });
+    console.log(page);
+}
+}, [inputPictureName, page]);
 
   const getSearchbarInputPictureName = (inputText) => {
     setInputPictureName(inputText);
+    setPictures([]);
+    setPage(1);
   };
-
-  const getPictures = (pictureName) => {
-    fetchPictures(pictureName)
-    .then(data => {
-      setPictures(data.hits)
-    })
-    .catch(error => console.log(error))
-  }
 
   const openModal = (link) => {
     setSelectedPicture(link);
-    setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setSelectedPicture('');
-    setIsModalOpen(false);
   };
 
-  const onLoadMore = async () => {
-    setIsLoading(true);
-    const nextPage = page + 1;
-    const newPictures = await fetchPictures(inputPictureName, nextPage);
-    setPictures([...pictures, ...newPictures.hits]);
-    setPage(nextPage);
-    setShowLoadMoreButton(newPictures.total > pictures.length + newPictures.hits.length);
-    setIsLoading(false);
+  const onLoadMore = () => {
+    setPage(page + 1);
   };
 
     return (
       <Container>
         <Searchbar onSubmit={getSearchbarInputPictureName} />
         {pictures.length !== 0 && (
-          <ImageGallery
-          pictures={pictures}
-          openModal={openModal}
-          />
-        )}
+          <ImageGallery pictures={pictures} openModal={openModal}/>)}
         {selectedPicture && (
           <Modal onCloseModal={closeModal} showPicture={selectedPicture}/>
         )}
-        {pictures.length !== 0 && (
-        <Button
-        handleLoadMore={onLoadMore}
-      />
-        )}
-        {isLoading && (
-          <Loader />
-        )}
+        {pictures.length !== 0 && !isLoading && <Button handleLoadMore={onLoadMore} />}
+        {isLoading && <Loader />}
         <ToastContainer autoClose={2000} />
-      </Container>
-      
+        </Container> 
     );
   }
 
